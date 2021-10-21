@@ -1,0 +1,6 @@
+Irakli Grigolia(igrigolia) & Ivan Eroshenko(ieroshenko) project2 readme
+
+For phase1 we need to navigate to phase1 folder and type "make all". After that mymodule.ko file will be created. To insert that module we type "sudo insmod mymodule.ko". To test it just open and close files/folders; appropriate messages will be created in syslog. After we can type "tail -n 20 /var/log/syslog" and it will show us last 20 lines of syslog.(see syslog.txt) 
+
+For phase2 we need to navigate to phase2v2 foler and type "make all". After that 
+info.ko file will be created. To insert it we type "sudo insmod info.ko". To test it, we need to compile the test.c file. For that we type "gcc test.c". After that "a.out" will created. Type "./a.out" and results will be displayed.(see test.txt) 

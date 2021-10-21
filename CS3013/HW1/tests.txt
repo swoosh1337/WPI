@@ -1,0 +1,117 @@
+root@kali:~/Desktop/CS3013 /HW1# ./doit wc sherlock.txt
+  134  2260 12617 sherlock.txt
+
+--Statistics--
+User Time: 1.557ms
+System Time : 0ms
+Wall clock time : 1.72998ms
+Involuntarily preempted 0 times
+Voluntarily preempted 1 times
+Major Page faults : 0
+Minor Page faults satisfied by memory reclaim: 107
+---------------------------------------------------------------
+root@kali:~/Desktop/CS3013 /HW1# ./doit ls -l
+total 100
+-rwxr-xr-x 1 root root 72552 Aug 26 22:54 doit
+-rwxr-xr-x 1 root root  6511 Aug 26 22:50 doit.cpp
+-rwxr-xr-x 1 root root    98 Aug 25 14:06 makefile
+-rw-r--r-- 1 root root 12617 Aug 25 13:32 sherlock.txt
+
+--Statistics--
+User Time: 3.084ms
+System Time : 0ms
+Wall clock time : 38.708ms
+Involuntarily preempted 2 times
+Voluntarily preempted 3 times
+Major Page faults : 0
+Minor Page faults satisfied by memory reclaim: 160
+--------------------------------------------------------------
+root@kali:~/Desktop/CS3013 /HW1# ./doit 
+==>ls
+doit  doit.cpp	makefile  sherlock.txt
+
+--Statistics--
+User Time: 2.203ms
+System Time : 0ms
+Wall clock time : 2.69897ms
+Involuntarily preempted 4 times
+Voluntarily preempted 1 times
+Major Page faults : 0
+Minor Page faults satisfied by memory reclaim: 135
+==>cd ..
+==>ls
+HW1
+
+--Statistics--
+User Time: 2.214ms
+System Time : 0ms
+Wall clock time : 2.23608ms
+Involuntarily preempted 0 times
+Voluntarily preempted 1 times
+Major Page faults : 0
+Minor Page faults satisfied by memory reclaim: 137
+==>cd HW1
+==>exit
+root@kali:~/Desktop/CS3013 /HW1# 
+-----------------------------------------------------------
+root@kali:~/Desktop/CS3013 /HW1# ./doit 
+==>set prompt = myprompt:
+myprompt:ls
+doit  doit.cpp	makefile  sherlock.txt
+
+--Statistics--
+User Time: 0ms
+System Time : 2.41ms
+Wall clock time : 2.53784ms
+Involuntarily preempted 1 times
+Voluntarily preempted 1 times
+Major Page faults : 0
+Minor Page faults satisfied by memory reclaim: 130
+myprompt:exit
+root@kali:~/Desktop/CS3013 /HW1# 
+-----------------------------------------------------------
+root@kali:~/Desktop/CS3013 /HW1# ./doit
+==>sleep 10 &
+[1] 22605
+==>sleep 11 &
+[2] 22606
+==>exit
+There are processes running, please wait before exiting
+Running jobs:
+[1] 22605 sleep
+[2] 22606 sleep
+root@kali:~/Desktop/CS3013 /HW1# 
+------------------------------------------------------------
+root@kali:~/Desktop/CS3013 /HW1# ./doit
+==>cd dir
+==>ls
+
+--Statistics--
+User Time: 2.299ms
+System Time : 0ms
+Wall clock time : 2.38599ms
+Involuntarily preempted 0 times
+Voluntarily preempted 1 times
+Major Page faults : 0
+Minor Page faults satisfied by memory reclaim: 135
+==>
+-----------------------------------------------------------
+root@kali:~/Desktop/CS3013 /HW1# ./doit
+==> sleep 1000 &
+[1] 22674
+==>sleep 11111 &
+[2] 22676
+==>sleep 11111111 &
+[3] 22677
+==>jobs
+[1] 22674 sleep
+[2] 22676 sleep
+[3] 22677 sleep
+==>exit
+There are processes running, please wait before exiting
+Running jobs:
+[1] 22674 sleep
+[2] 22676 sleep
+[3] 22677 sleep
+
+

@@ -1,0 +1,49 @@
+Script started on 2019-10-09 18:59:12-04:00 [TERM="xterm-256color" TTY="/dev/pts/1" COLUMNS="80" LINES="24"]
+]0;root@kali: ~/Desktop/hw4[01;31mroot@kali[00m:[01;34m~/Desktop/hw4[00m# exitls -1d * | ./proj4 thread 65[Kmake[Kclear[1Pmakeclear[1Pmakels -1d * | ./proj4
+Bad files: 0
+Directories: 0
+Regular Files: 8
+Special Files: 0
+Regular File Bytes: 66907
+Text Files: 7
+Text File Bytes: 8283
+User Time: 5
+System Time: 5
+Clock Time: 7
+]0;root@kali: ~/Desktop/hw4[01;31mroot@kali[00m:[01;34m~/Desktop/hw4[00m# ls -1d * | ./proj4exit[Kls -1d * | ./proj4 thread 65[Kmake[Kls -1d * | ./proj4 thread 5
+Bad files: 0
+Directories: 0
+Regular Files: 8
+Special Files: 0
+Regular File Bytes: 66907
+Text Files: 6
+Text File Bytes: 8283
+User Time: 15
+System Time: 0
+Clock Time: 8
+]0;root@kali: ~/Desktop/hw4[01;31mroot@kali[00m:[01;34m~/Desktop/hw4[00m# ls -1d * | ./proj4 thread 5[Kexit[Kls -1d * | ./proj4 thread 6565[K thread 56[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cexit[Kls -1d * | ./proj4 thread 5[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Kls -1d * | ./proj4 thread 5[Kexit[Kls -1d * | ./proj4 thread 65[Kmake[Kclear[1Pmake allclean[2Pall[Kclear[1Pmakels -1d * | ./proj4 thread 56[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cexit[Kls -1d * | ./proj4 thread 5[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Kls -1d * | ./proj4 thread 5[Kexit[Kls -1d * | ./proj4 thread 65[Kmake[Kclear[K[K[K[K[Kmake allclean[2Pall[K[Kmakels -1d * | ./proj4 thread 8
+Bad files: 0
+Directories: 0
+Regular Files: 8
+Special Files: 0
+Regular File Bytes: 66907
+Text Files: 6
+Text File Bytes: 8283
+User Time: 16
+System Time: 0
+Clock Time: 6
+]0;root@kali: ~/Desktop/hw4[01;31mroot@kali[00m:[01;34m~/Desktop/hw4[00m# ls -1d /etc/* | ./proj4 thread 10
+Bad files: 0
+Directories: 187
+Regular Files: 114
+Special Files: 0
+Regular File Bytes: 502749
+Text Files: 107
+Text File Bytes: 318414
+User Time: 105
+System Time: 350
+Clock Time: 132
+]0;root@kali: ~/Desktop/hw4[01;31mroot@kali[00m:[01;34m~/Desktop/hw4[00m# exit[K[K[K[Kscrip[K[K[K[K[Kexitls -1d /etc/* | ./proj4 thread 10[6P* | ./proj4 thread 85[Kexit[Kls -1d * | ./proj4 thread 6[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cexit[K
+exit
+
+Script done on 2019-10-09 19:00:44-04:00 [COMMAND_EXIT_CODE="0"]

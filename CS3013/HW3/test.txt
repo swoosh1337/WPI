@@ -1,0 +1,66 @@
+Irakli Grigolia
+
+1) root@kali:~/Desktop/hw3# make
+adder.c: In function ‘SendMsg’:
+adder.c:35:3: warning: implicit declaration of function ‘sleep’ [-Wimplicit-function-declaration]
+   sleep(1);
+   ^~~~~
+root@kali:~/Desktop/hw3# ./a.out 10
+1 3
+1 4
+4 1
+1 1 1
+The result from thread 1 is 4 from 1 operations during 1 secs.
+The result from thread 3 is 1 from 1 operations during 1 secs.
+The result from thread 4 is 1 from 1 operations during 1 secs.
+----------------------------------------------------------------------
+
+2)
+root@kali:~/Desktop/hw3# ./a.out 11
+Error: program cannot create more than 10 threads
+root@kali:~/Desktop/hw3#
+
+---------------------------------------------------------
+
+3)
+root@kali:~/Desktop/hw3# ./a.out 0
+Defaulting to maximum number of threads which is 10
+1 4
+1 1
+2 1
+3 2
+1 1 1
+The result from thread 1 is 3 from 2 operations during 2 secs.
+The result from thread 2 is 3 from 1 operations during 1 secs.
+The result from thread 4 is 1 from 1 operations during 1 secs.
+--------------------------------------------------------------
+
+4)
+root@kali:~/Desktop/hw3# ./a.out 3
+1 4
+ERROR! Thread 4 does not exist !!!
+1 3
+2 1
+1 1 1
+The result from thread 1 is 2 from 1 operations during 1 secs.
+The result from thread 3 is 1 from 1 operations during 1 secs.
+--------------------------------------------------------------
+
+
+5)
+root@kali:~/Desktop/hw3# ./a.out 5
+-1 4
+ERROR! Value -1 is negative!
+1 1
+2 1
+ 1 1 1
+The result from thread 1 is 3 from 2 operations during 2 secs.
+The result from thread 4 is 0 from 0 operations during 0 secs.
+root@kali:~/Desktop/hw3# 
+-------------------------------------------------------------------------- 
+
+ 
+
+
+
+

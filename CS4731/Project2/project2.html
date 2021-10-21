@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <div style="text-align: center">
+        <h1>CS 4731 Project 2 </h1>
+    </div>
+
+    <div style="text-align: center">
+        <form id="select_file" name="form">
+            <input type="file" id="file_select" name="file" accept=".ply"/>
+        </form>
+    </div>
+
+    <script id="vshader" type="x-shader/x-vertex">
+	attribute vec4 vPosition;
+	attribute vec4 vColor;
+	uniform mat4 modelMatrix;
+	uniform mat4 projectionMatrix;
+	varying vec4 fColor;
+    varying float depth;
+
+	void main() {
+		gl_Position = projectionMatrix * modelMatrix * vPosition;	// Point position
+  		gl_PointSize = 10.0;		// Point size
+  		fColor = vColor;
+      float plane = 3.0;
+      depth = ((gl_Position.z*0.75)-0.5)/ plane;
+  }
+	</script>
+    <script id="fshader" type="x-shader/x-fragment">
+
+	precision mediump float;
+    uniform bool enableFog;
+    varying vec4 fColor;
+    varying float depth;
+	void main()
+	{
+    if(enableFog){
+      gl_FragColor = vec4(depth, depth, depth, 1.0);
+    }
+    else{
+      gl_FragColor = fColor;
+    }
+  }
+	</script>
+    <script src="lib/webgl-utils.js"></script>
+    <script src="lib/initShaders.js"></script>
+    <script src="lib/MV.js"></script>
+    <script src="project2.js"></script>
+    <title></title>
+
+</head>
+<body onload="main()">
+<div style="text-align: center">
+    <canvas id="webgl" width="400" height="400" style="border: 1px solid black;">
+        Please use a browser that supports the "canvas" tag.
+    </canvas>
+</div>
+</body>
+</html>

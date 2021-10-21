@@ -1,0 +1,2 @@
+In order to run the program  go to folder HW3 and type "make". After compilation type ./a.out followed by the number of threads you want to create. For example: "./a.out 10" => 10 threads will be created. After that you should type in values and id's of threads you want to send value to and press enter to go to next line. For example: 1 1
+this will send value of 1 to thread number 1. if you want to stop and see the results just type 1 1 1 or any other 3 nubmers with spaces between them, program stops as it assumes that end of file is reached end prints out the results.

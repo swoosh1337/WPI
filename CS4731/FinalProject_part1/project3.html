@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Final Project </title>
+
+        <body onload="main()">
+        <div style="text-align: center">
+            <h1>Final Project Part 1 </h1>
+            <canvas id="webgl" width="400" height="400" style="border: 3px solid black">
+                Please use a browser that supports the "canvas" tag.
+            </canvas>
+        </div>
+    </body>
+
+        <script id="vshader" type="x-shader/x-vertex">
+
+	    attribute vec4 vPosition, vNormal,vColor;
+	    uniform vec4 diffuseProduct,specularProduct,lightPosition,ambientProduct; 
+	    uniform float shininess, cutoff;
+	    uniform mat4 projectionMatrix, modelMatrix;
+	    varying vec4 fColor;
+
+	    void main() {
+        // converting vertex position to eye coordinates 
+	        vec3 position = (modelMatrix * vPosition).xyz;
+
+	        vec3 L = normalize(lightPosition.xyz - position);
+	        vec3 V = normalize(-position);
+            //converting vertex normal to
+	        vec3 N = normalize(modelMatrix * vNormal).xyz;
+
+            //reflection vector calculation
+            vec3 R = (2.0 * dot(L, N) * N) - L;
+
+            float a = dot(L, N);
+            float b = pow(max(dot(V,R),0.0),shininess);
+
+            vec4 diffuse = vec4(0, 0, 0, 0);
+            vec4 specular = vec4(0, 0, 0, 0);
+            vec4 ambient = ambientProduct;
+
+            vec3 lightDir = vec3(0, 0, -1.0);
+
+            if(dot(L, -lightDir) > cutoff){
+                diffuse = a * diffuseProduct + vColor;
+                specular = b * specularProduct;
+            }
+
+		    gl_Position = projectionMatrix * modelMatrix * vPosition;
+  		    gl_PointSize = 10.0;
+                fColor = ambient + diffuse + specular;
+                fColor.a = 1.0;
+
+  	    }
+	    </script>
+
+        <script id="fshader" type="x-shader/x-fragment">
+
+	    precision mediump float;
+	    varying vec4 fColor;
+
+	    void main()
+	    {
+	        gl_FragColor = fColor;
+  	    }
+	    </script>
+
+        <script src="lib/webgl-utils.js"></script>
+        <script src="lib/initShaders.js"></script>
+        <script src="lib/MV.js"></script>
+
+        <script src="project3.js"></script>
+        <script src="mesh.js"></script>
+        <script src="create.js"></script>
+
+</html>
