@@ -1,0 +1,386 @@
+;;
+;; Problem 1
+;;
+
+(define-struct contact (name address email))
+;; a Contact is a (make-contact String String String)
+;; interp: represents a Contact where
+;;    name is the name of the contact
+;;    address is the home address of the contact
+;;    email is the email address of the contact
+
+(define-struct charge (bname amount))
+;; a Change is a (make-charge String Number)
+;; interp: represents a Charge where
+;;    bname is the business name where the credit card was used
+;;    amount is the amount that was charged
+
+;; a ListOfCharge is one of:
+;;  - empty
+;;  - (cons Charge ListOfCharge)
+
+(define CONTACT1 (make-contact "Joe" "100 Institute Road" "joe@wpi.edu"))
+(define CONTACT2 (make-contact "Ann" "50 Pleasant Street" "ann123@gmail.com"))
+(define CONTACT3 (make-contact "Bob" "20 Dewey Street" "bob456@outlook.com"))
+(define CONTACT4 (make-contact "Tom" "10 Boynton Street" "tom@wpi.edu"))
+(define CONTACT5 (make-contact "James" "30 Boynton Street" "james@wpi.edu"))
+(define CONTACT6 (make-contact "Cristie" "59 Prentice Junction" "cristie@imgur.com"))
+(define CONTACT7 (make-contact "Lavinia" "727 Maryland Circle" "lavinia15@gmail.com"))
+(define CONTACT8 (make-contact "Sophia" "5 Shrewsbury Street" "sophia90@yahoo.com"))
+
+(define CONTACT1-CHARGE (cons
+                         (make-charge "Apple" 300)
+                         (cons
+                          (make-charge "Coca Cola" 1.50) empty)))
+(define CONTACT2-CHARGE (cons
+                         (make-charge "Netflix" 9.99)
+                         (cons
+                          (make-charge "Microsoft" 200) empty)))
+(define CONTACT3-CHARGE (cons
+                         (make-charge "Facebook" 50)
+                         (cons
+                          (make-charge "Dell" 120) empty)))
+(define CONTACT4-CHARGE (cons
+                         (make-charge "Twitter" 60)
+                         (cons
+                          (make-charge "MSI" 300) empty)))
+(define CONTACT5-CHARGE (cons
+                         (make-charge "Unilever" 15)
+                         (cons
+                          (make-charge "Samsung" 150)
+                          (cons
+                           (make-charge "Sony" 200) empty))))
+(define CONTACT6-CHARGE (cons
+                         (make-charge "Texas Instruments" 35)
+                         (cons
+                          (make-charge "Akamai" 75)
+                          (cons
+                           (make-charge "Nvidia" 250) empty))))
+(define CONTACT7-CHARGE (cons
+                         (make-charge "Google" 25)
+                         (cons
+                          (make-charge "Cisco" 150)
+                          (cons
+                           (make-charge "VMware" 5) empty))))
+(define CONTACT8-CHARGE (cons
+                         (make-charge "Nike" 70)
+                         (cons
+                          (make-charge "Apple" 500)
+                          (cons
+                           (make-charge "Adidas" 55) empty))))
+
+;;
+;; Problem 2
+;;
+
+; ;; Contact ->
+; ;;
+; (define (contact-fcn a-contact)
+;   (...
+;    (contact-name a-contact)
+;    (contact-address a-contact)
+;    (contact-email a-contact)))
+
+
+; ;; Charge ->
+; ;;
+; (define (charge-fcn a-charge)
+;   (...
+;    (charge-bname a-charge)
+;    (charge-amount a-charge)))
+
+
+; ;; ListOfCharge ->
+; ;;
+; (define (loc-fcn a-loc)
+;   (cond
+;     [(empty? a-loc) (...)]
+;     [(cons? a-loc) (... (charge-fcn (first a-loc))
+;                         (loc-fcn (rest a-loc)))]))
+
+
+;;
+;; Problem 3
+;;
+
+;; a BST is one of
+;;   false
+;;   CustNode
+
+;; a CustNode is a (make-customer Natural Contact Number ListOfCharge BST BST)
+;; interp: represents a node in a customer tree where
+;;   card-number is the customer's card number
+;;   contact is the customer's contact information
+;;   limit is the customer's credit limit
+;;   charge is the customer's charges
+;;   left is a BST (a CustNode) or false
+;;   right is a BST (a CustNode or false
+;; invariant:
+;;   if the card-number is greater than the customer's card-number,
+;;      the customer is placed to the right branch of the CustNode
+;;   if the card-number is less than the customer's card-number,
+;;      the customer is placed to the left branch of the CustNode
+;;   the card-number field is distinct among all customers
+(define-struct customer (card-number contact limit charges left right))
+
+;;
+;; Problem 4
+;;
+
+(define CUSTOMER-TREE (make-customer 250 CONTACT1 500 CONTACT1-CHARGE
+                                     (make-customer 150 CONTACT2 400 CONTACT2-CHARGE
+                                                    (make-customer 110 CONTACT4 900 CONTACT4-CHARGE false false)
+                                                    (make-customer 130 CONTACT5 1200 CONTACT5-CHARGE false false)
+                                                    )
+                                     (make-customer 300 CONTACT3 1000 CONTACT3-CHARGE
+                                                    (make-customer 270 CONTACT6 1300 CONTACT6-CHARGE false false)
+                                                    (make-customer 330 CONTACT7 1500 CONTACT7-CHARGE
+                                                                   (make-customer 310 CONTACT8 1500 CONTACT8-CHARGE false false)
+                                                                   false)
+                                                    )))
+
+;;
+;; Problem 5
+;;
+
+; ;; bst-fcn: CustNode ->
+; ;;
+; (define (bst-fcn a-custnode)
+;   (cond
+;     [(boolean? a-custnode) (...)]
+;     [(customer? a-custnode) (...
+;                              (customer-card-number a-custnode)
+;                              (contact-fcn (customer-contact a-custnode))
+;                              (customer-limit a-custnode)
+;                              (loc-fcn (customer-charges a-custnode))
+;                              (bst-fcn (customer-left a-custnode))
+;                              (bst-fcn (customer-right a-custnode)))]))
+
+
+;;
+;; Problem 6
+;;
+
+;; count-big-limits: BST Number -> Natural
+;; Consumes a binary search tree and a credit limit amount
+;; and counts the number of customers in the tree
+;; who have a credit limit higher than the given amount.
+
+(check-expect (count-big-limits false 0) 0)
+(check-expect (count-big-limits CUSTOMER-TREE 1000) 4)
+(check-expect (count-big-limits CUSTOMER-TREE 500) 6)
+
+(define (count-big-limits a-custnode amount)
+  (cond
+    [(boolean? a-custnode) 0]
+    [(customer? a-custnode) (if (> (customer-limit a-custnode) amount)
+                                (+ 1 (count-big-limits (customer-left a-custnode) amount)
+                                        (count-big-limits (customer-right a-custnode) amount))
+                                (+ (count-big-limits (customer-left a-custnode) amount)
+                                   (count-big-limits (customer-right a-custnode) amount)))
+                            ]))
+
+;;
+;; Problem 7
+;;
+
+;; calculate-balance: ListOfCharge -> Number
+;; Consumes a list of charges and calculates
+;; the sum of the amounts of all items in the list.
+
+(check-expect (calculate-balance empty) 0)
+(check-expect (calculate-balance (list (make-charge "Google" 150)
+                                                      (make-charge "Microsoft" 100))) 250)
+
+(define (calculate-balance a-loc)
+  (cond
+    [(empty? a-loc) 0]
+    [(cons? a-loc) (+ (charge-amount (first a-loc))
+                      (calculate-balance (rest a-loc)))]))
+
+;; any-over-limit?: BST -> Boolean
+;; Consumes a binary search tree and produces
+;; true if any customer in the tree has
+;; an outstanding balance greater that their credit limit.
+;; A customer's balance is calculated by summing the amounts
+;; of all purchases that they've charged.
+
+(check-expect (any-over-limit? false) false)
+(check-expect (any-over-limit? CUSTOMER-TREE) false)
+(check-expect (any-over-limit?
+               (make-customer 200 CONTACT1 300
+                              (list (make-charge "Samsung" 100)
+                                    (make-charge "Apple" 250))
+                              false
+                              false)) true)
+(check-expect (any-over-limit?
+               (make-customer 100 CONTACT2 400
+                              (list (make-charge "Google" 150)
+                                    (make-charge "Microsoft" 100))
+                              (make-customer 50 CONTACT3 200
+                                             (list (make-charge "Dell" 150)
+                                                   (make-charge "LG" 120))
+                                             false
+                                             false)
+                              (make-customer 150 CONTACT4 450
+                                             (list (make-charge "Amazon" 260)
+                                                   (make-charge "Ebay" 190))
+                                             false
+                                             false)))
+              true)
+(check-expect (any-over-limit?
+               (make-customer 100 CONTACT5 400
+                              (list (make-charge "Google" 150)
+                                    (make-charge "Microsoft" 100))
+                              (make-customer 50 CONTACT6 200
+                                             (list (make-charge "Dell" 50)
+                                                   (make-charge "LG" 150))
+                                             false
+                                             (make-customer 75 CONTACT8 100
+                                                            (list (make-charge "Apple" 101))
+                                                            false
+                                                            false))
+                              (make-customer 150 CONTACT7 450
+                                             (list (make-charge "Amazon" 260)
+                                                   (make-charge "Ebay" 190))
+                                             false
+                                             false)))
+              true)
+
+(define (any-over-limit? a-custnode)
+  (cond
+    [(boolean? a-custnode) false]
+    [(customer? a-custnode) (if (> (calculate-balance (customer-charges a-custnode))
+                                   (customer-limit a-custnode))
+                                true
+                                (or (any-over-limit? (customer-left a-custnode))
+                                    (any-over-limit? (customer-right a-custnode))))]))
+
+;;
+;; Problem 8
+;;
+
+;; increase-limit: BST Natural Number -> BST
+;; Consumes a binary search tree, a credit card number
+;; and an amount of money and produces the exact same tree
+;; except that the credit limit of the customer with the given
+;; card number has benn increased by the given amount.
+
+(check-expect (increase-limit CUSTOMER-TREE 250 100) (make-customer 250 CONTACT1 600 CONTACT1-CHARGE
+                                                                    (make-customer 150 CONTACT2 400 CONTACT2-CHARGE
+                                                                                   (make-customer 110 CONTACT4 900 CONTACT4-CHARGE false false)
+                                                                                   (make-customer 130 CONTACT5 1200 CONTACT5-CHARGE false false)
+                                                                                   )
+                                                                    (make-customer 300 CONTACT3 1000 CONTACT3-CHARGE
+                                                                                   (make-customer 270 CONTACT6 1300 CONTACT6-CHARGE false false)
+                                                                                   (make-customer 330 CONTACT7 1500 CONTACT7-CHARGE
+                                                                                                  (make-customer 310 CONTACT8 1500 CONTACT8-CHARGE false false)
+                                                                                                  false)
+                                                                                   )))
+(check-expect (increase-limit CUSTOMER-TREE 110 200) (make-customer 250 CONTACT1 500 CONTACT1-CHARGE
+                                                                    (make-customer 150 CONTACT2 400 CONTACT2-CHARGE
+                                                                                   (make-customer 110 CONTACT4 1100 CONTACT4-CHARGE false false)
+                                                                                   (make-customer 130 CONTACT5 1200 CONTACT5-CHARGE false false)
+                                                                                   )
+                                                                    (make-customer 300 CONTACT3 1000 CONTACT3-CHARGE
+                                                                                   (make-customer 270 CONTACT6 1300 CONTACT6-CHARGE false false)
+                                                                                   (make-customer 330 CONTACT7 1500 CONTACT7-CHARGE
+                                                                                                  (make-customer 310 CONTACT8 1500 CONTACT8-CHARGE false false)
+                                                                                                  false)
+                                                                                   )))
+
+(define (increase-limit a-custnode card-number amount)
+  (cond
+    [(boolean? a-custnode) false]
+    [(customer? a-custnode) (if (= (customer-card-number a-custnode) card-number)
+                                (make-customer (customer-card-number a-custnode)
+                                               (customer-contact a-custnode)
+                                               (+ (customer-limit a-custnode) amount)
+                                               (customer-charges a-custnode)
+                                               (increase-limit (customer-left a-custnode) card-number amount)
+                                               (increase-limit (customer-right a-custnode) card-number amount))
+                                (make-customer (customer-card-number a-custnode)
+                                               (customer-contact a-custnode)
+                                               (customer-limit a-custnode)
+                                               (customer-charges a-custnode)
+                                               (increase-limit (customer-left a-custnode) card-number amount)
+                                               (increase-limit (customer-right a-custnode) card-number amount)))]))
+
+;;
+;; Problem 9
+;;
+
+;; compare-cards: BST Natural -> Boolean
+;; Consumes a binary search tree and a card number
+;; produces true if the card number of the customer
+;; is larger that the given number
+
+(define (compare-cards a-custnode card-number)
+  (> card-number (customer-card-number a-custnode)))
+
+;; add-customer: BST Natural Contact -> BST
+;; Consumes a binary search tree, a credit card number,
+;; and a customer's contact information and produces
+;; a tree with a new customer added.
+;; The new customer has the given credit card number
+;; and contact information, a credit limit of $25.000
+;; and an empty list of charges.
+
+(check-expect (add-customer CUSTOMER-TREE 360 (make-contact "Maria" "40 Highland Street" "maria90@yahoo.com"))
+              (make-customer 250 CONTACT1 500 CONTACT1-CHARGE
+                             (make-customer 150 CONTACT2 400 CONTACT2-CHARGE
+                                            (make-customer 110 CONTACT4 900 CONTACT4-CHARGE false false)
+                                            (make-customer 130 CONTACT5 1200 CONTACT5-CHARGE false false)
+                                            )
+                             (make-customer 300 CONTACT3 1000 CONTACT3-CHARGE
+                                            (make-customer 270 CONTACT6 1300 CONTACT6-CHARGE false false)
+                                            (make-customer 330 CONTACT7 1500 CONTACT7-CHARGE
+                                                           (make-customer 310 CONTACT8 1500 CONTACT8-CHARGE false false)
+                                                           (make-customer 360 (make-contact "Maria" "40 Highland Street"
+                                                                                            "maria90@yahoo.com")
+                                                                          25000
+                                                                          empty
+                                                                          false
+                                                                          false)))
+                             ))
+
+(check-expect (add-customer
+               (make-customer 250 CONTACT1 500 CONTACT1-CHARGE
+                                           (make-customer 150 CONTACT2 400 CONTACT2-CHARGE
+                                                          false
+                                                          false)
+                                           (make-customer 300 CONTACT3 1000 CONTACT3-CHARGE
+                                                      false
+                                                      false)) 170 CONTACT4)
+              (make-customer 250 CONTACT1 500 CONTACT1-CHARGE
+                                           (make-customer 150 CONTACT2 400 CONTACT2-CHARGE
+                                                          false
+                                                          (make-customer 170 CONTACT4 25000 empty false false))
+                                           (make-customer 300 CONTACT3 1000 CONTACT3-CHARGE
+                                                      false
+                                                      false)))
+
+(define (add-customer a-custnode card-number contact)
+  (cond
+    [(boolean? a-custnode) (make-customer card-number
+                        contact
+                        25000
+                        empty
+                        false
+                        false)]
+    [(customer? a-custnode) (if (compare-cards a-custnode card-number)
+                                (make-customer (customer-card-number a-custnode)
+                                               (customer-contact a-custnode)
+                                               (customer-limit a-custnode)
+                                               (customer-charges a-custnode)
+                                               (customer-left a-custnode)
+                                               (add-customer (customer-right a-custnode) card-number contact))
+                                (make-customer (customer-card-number a-custnode)
+                                               (customer-contact a-custnode)
+                                               (customer-limit a-custnode)
+                                               (customer-charges a-custnode)
+                                               (add-customer (customer-left a-custnode) card-number contact)
+                                               (customer-right a-custnode)))]))
+                                
+
+                                             

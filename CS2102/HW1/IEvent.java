@@ -1,0 +1,4 @@
+
+interface IEvent {
+	double pointsEarned();
+}

@@ -1,0 +1,321 @@
+;;
+;; Problem 1
+;;
+
+(define-struct ad (name duration cost aired? TimeOfDay num ))
+
+;; An Ad is a (make-ad String Natural Natural Boolean TimeOfDay Natural)
+;; interp. represents a  television ad where
+;; name is the name of the product the ad is for
+;; duration is the duration of the ad (in seconds)
+;; cost is the cost to produce the ad (in thousands of dollars)
+;; aired? is whether  the ad is to be aired nationally or locally
+;; TimeOfDay the time of day that the ad is to be aired
+;; num is the number of times the ad is to be aired
+
+
+
+(define ad1 ( make-ad "tazi" 5 1 true "daytime" 10))
+(define ad2 (make-ad  "tamaza" 7 2 false "primetime" 5))
+(define ad3 (make-ad  "zvito" 2 5 true  "off-hours" 12))
+(define AD1 (make-ad "Apple" 20 1000 true "daytime" 10))
+(define AD2 (make-ad "Microsoft" 30 1200 true "primetime" 12))
+(define AD-GROUP1 (cons AD1 (cons AD2 empty)))
+(define AD-GROUP2 (cons (make-ad "Google" 10 500 false "daytime" 5) (cons (make-ad "Oracle" 5 800 true "off-hour" 3) empty)))
+(define AD-GROUP3 (cons (make-ad "Toyota" 15 750 false "off-hour" 8) (cons (make-ad "YouTube" 8 400 true "daytime" 5) empty)))
+
+
+;; a ListOfAd is one of
+;; empty
+;; (cons  ad ListOfAd )
+
+
+(define L1(cons ad1 empty ))
+(define L2(cons ad1(cons ad2 empty)))
+(define L3(cons ad1(cons ad2(cons ad3 empty))))
+
+
+;; a TimeOfDay is one of:
+;;  - "daytime"
+;;  - "primetime"
+;;  - "off-hour"
+
+
+;;
+;; Problem 2
+;; 
+
+
+;; fn-for-ad: ad ->
+; 
+; (define (fn-for-ad a    )
+;   (...) (ad-name a      ) ;String
+;         (ad-duration a  ) ;Natural
+;         (ad-cost a      ) ;Natural
+;         (ad-aired? a    ) ;Boolean
+;         (ad-TimeOfDay a ) ;TimeOfDay
+;         (ad-num a       ));Natural
+; 
+
+
+
+
+;; loa-fcn: ListOfAd ->
+
+ ; (define (loa-fcn a-loa)
+;   (cond [(empty? a-loa)  (...)]
+;        [(cons? a-loa)   (... (first a-loa)
+;                             (loa-fcn (rest a-loa)))]))
+; 
+; 
+
+
+;;
+;; Problem 3 
+;;
+
+
+;; more-than: AD Natural -> Boolean
+;; Consumes an ad and produces
+;; true if the ad time exceeds the given time or
+;; false if the ad running time is less than or equal to the given time
+
+ (check-expect (more-than ad1 15)false)
+ (check-expect (more-than ad1 3)true)
+
+ (define (more-than ad num)
+    (> (ad-duration ad ) num))
+
+
+
+;; primetime-ad?: AD -> Boolean
+;; Consumes an ad and produces
+;; true if the ad runs on primetime or
+;; false if the ad does not run on primetime
+
+(check-expect ( primetime-ad? ad1 )false)
+(check-expect (primetime-ad? ad2 )true)
+
+(define (primetime-ad? ad)
+  (string=? (ad-TimeOfDay ad ) "primetime"))
+
+;; count-long-primetime: ListOfAd Natural -> Natural
+;; Consumes a ListOfAd and an amount of time
+;; and produces the number of primetime ads in the list
+;; that run longer than the given number of seconds
+
+
+(check-expect(count-long-primetime L2 5) 1)
+(check-expect(count-long-primetime L2 10) 0)
+(check-expect(count-long-primetime empty 10) 0)
+(check-expect(count-long-primetime (cons (make-ad "atasa" 11 12 true "primetime" 11) empty) 11) 0)
+
+
+(define (count-long-primetime loa time)
+  (cond
+    [(empty? loa) 0]
+    [(cons? loa) (if (and (more-than (first loa) time) (primetime-ad? (first loa)))
+                     (+ 1 (count-long-primetime (rest loa) time))
+                     (count-long-primetime (rest loa) time))]))
+
+;;
+;; Problem 4 
+;;
+
+;; runs-on?: AD time-of-day -> Boolean
+;; Consumes an ad and a time of the day and produces
+;; true if the ad runs on the specific time of the day
+;; or false if it doesn't
+
+(check-expect (runs-on? ad1 "daytime")true)
+(check-expect (runs-on? ad2 "daytime")false)
+
+(define(runs-on? ad Timeofday)
+  (string=? (ad-TimeOfDay ad) Timeofday))
+
+;; any-ads-in-timeslot?: ListOfAd String -> Boolean
+;; Consumes a ListOfAd and a TimeOfDay and produces true if the list contains any ads
+;; that run on the given time of day
+
+(check-expect(any-ads-in-timeslot? L1 "daytime")true)
+(check-expect(any-ads-in-timeslot? L1 "primetime")false)
+(check-expect(any-ads-in-timeslot? L2 "primetime")true)
+(check-expect(any-ads-in-timeslot? (cons (make-ad "jima" 12 2 false "daytime" 9) empty) "daytime")true)
+(check-expect(any-ads-in-timeslot? empty "off-hour")false)
+(check-expect(any-ads-in-timeslot? (cons(make-ad "giga" 8 3 true "pimetime" 2)empty ) "off-hour" )false)
+
+(define(any-ads-in-timeslot? loa TimeofDay)
+  (cond [(empty? loa) false]
+        [(cons? loa) (if (runs-on? (first loa) TimeofDay)
+                         true
+                     (any-ads-in-timeslot? (rest loa) TimeofDay))]))
+
+;;
+;; Problem 5 
+;;
+
+;; national-ads: ListOfAd -> ListOfAd
+;; Consumes a ListOfAd and produces a list containing only
+;; the ads airing nationally
+
+
+(check-expect(national-ads L1) L1)
+(check-expect(national-ads L2)(cons ad1 empty))
+(check-expect(national-ads L3)(cons ad1 (cons ad3 empty)))
+(check-expect(national-ads L2)(cons ad1 empty))
+(check-expect(national-ads empty)empty)
+
+
+(define(national-ads loa)
+  (cond [(empty? loa)empty]
+        [(cons? loa) (if (ad-aired? (first loa))
+                          (cons (first loa) (national-ads (rest loa)))
+                          (national-ads (rest loa)))]))
+
+
+;
+;; Problem 6
+;;
+
+;off-hours?: AD -> Boolean
+;; Consumes an ad and produces
+;; true if the add runs during the off-hours
+;; or false if it doesn't
+
+(check-expect (off-hours? (make-ad "Oracle" 5 800 true "off-hours" 3)) true)
+(check-expect (off-hours? (make-ad "Oracle" 5 800 true "daytime" 3)) false)
+
+(define(off-hours? ad)
+  (if (string=? (ad-TimeOfDay ad ) "off-hours")
+      true
+      false))
+;; get-name: AD -> String
+;; Consumes and ad and produces
+;; the name of the product of the AD
+
+(check-expect (get-name ad1 )"tazi")
+(check-expect (get-name ad2)"tamaza")
+        
+
+(define(get-name ad)
+  (ad-name ad))
+
+;; late-night-products: ListOfAd -> ListOfString
+;; Consumes a list of ads and produces
+;; a list of strings that contains
+;; the name of the products that are advertised
+;; during the off-hours
+
+(check-expect(late-night-products L1) empty)
+(check-expect(late-night-products empty)empty)
+(check-expect(late-night-products L3)(cons "zvito" empty))
+(check-expect(late-night-products (cons (make-ad "gurama" 12 9 true "off-hours" 1)(cons (make-ad"kaci" 11 7 true "off-hours" 2) empty))) (cons "gurama"(cons "kaci" empty)))
+
+(define (late-night-products aloa)
+  (cond
+    [(empty? aloa) empty]
+    [(cons? aloa) (if (off-hours? (first aloa))
+                      (cons (get-name (first aloa)) (late-night-products (rest aloa)))
+                      (late-night-products (rest aloa)))]))
+
+;;
+;; Problem 7
+;;
+
+;; determine-cost-blocks: Boolean Natural -> Number
+;; Consumes the type of the ad (true, if the ad is aired in the national market or
+;; false, if the ad is aired in the local market)
+;; and the duration (in seconds)
+;; and produces the cost of an ad depending on
+;; whether the ad is aired in the national or local market
+
+(check-expect(determine-cost-blocks true 30) 100000)
+(check-expect(determine-cost-blocks false 30)5000)
+
+(define (determine-cost-blocks national? seconds)
+  (cond
+    [national? (* (/ seconds 30) 100000)]
+    [(not national?) (* (/ seconds 30) 5000)]))
+
+
+;; cost-discount: String Number -> Number
+;; Consumes an ad airing cost and applies a discount
+;; depending on the time of day in which the ad is to be aired
+
+(check-expect (cost-discount "daytime" 100) 80)
+(check-expect (cost-discount "off-hour" 100) 50)
+(check-expect (cost-discount "primetime" 100) 100)
+
+(define (cost-discount time cost)
+  (cond
+    [(string=? time "daytime") (* cost 0.8)]
+    [(string=? time "off-hour") (* cost 0.5)]
+    [(string=? time "primetime") cost]))
+
+;; air-cost: AD -> Number
+;; Consumes an ad and produces the cost of airing the ad
+;; The cost of airing the ad is determined as follows:
+;;   Airtime is sold in 30-second-spot blocks
+;;   Each 30-second-spot block costs $100,000 for the national market
+;;   and $5,000 for a local market
+;;   A discount (applies for both national and local ads) of 20% is applied to the cost if the ad is aired during daytime
+;;   and a discount (applies for both national and local ads) of 50% is applied to the cost if the ad is aired during off-hours
+;;   The air-cost is multiplied by the number of times the ad is to be aired
+;;   assuming that all airings of the ad occur in the same market at the same time of day.
+
+
+(check-expect(air-cost (make-ad "zvito" 12 9 true "primetime" 1))40000)
+(check-expect(air-cost (make-ad "zvito" 12 9 true "off-hour" 1))20000)
+(check-expect(air-cost (make-ad "zvito" 12 9 false "primetime" 1))2000)
+(check-expect(air-cost (make-ad "zvito" 12 9 false "daytime" 1))1600)
+(check-expect(air-cost (make-ad "zvito" 12 9 false "off-hour" 1))1000)
+
+
+(define (air-cost an-ad)
+  (*
+     (cost-discount (ad-TimeOfDay an-ad)
+                    (determine-cost-blocks
+                       (ad-aired? an-ad)
+                       (ad-duration an-ad)))
+  (ad-num an-ad)))
+
+
+;;
+;; Problem 8
+;;
+
+
+;; total-ad-cost: AD -> Number
+;; Consumes an ad and produces the total cost of the ad
+;; The total cost of an ad consists of the sum of the cost
+;; of producing the ad and the cost of airing the ad
+
+
+(check-expect (total-ad-cost (make-ad "Fanta" 30 5000 false "daytime" 2)) 13000)
+
+
+(define (total-ad-cost an-ad)
+  (+ (ad-cost an-ad) (air-cost an-ad)))
+
+
+;;
+;; Problem 9
+;;
+
+;; expensive-ads: ListOfAd Number -> ListOfAd
+;; Consumes a list of ads and a number
+;; and produces a list of those ads for which
+;; the total cost exceeds the given number
+
+(check-expect (expensive-ads AD-GROUP1 600000)
+              (cons (make-ad "Microsoft" 30 1200 true "primetime" 12) empty))
+(check-expect (expensive-ads AD-GROUP2 20000)
+              (cons (make-ad "Oracle" 5 800 true "off-hour" 3) empty))
+
+(define (expensive-ads aloa cost)
+  (cond
+    [(empty? aloa) empty]
+    [(cons? aloa) (if (> (total-ad-cost (first aloa)) cost)
+                      (cons (first aloa) (expensive-ads (rest aloa) cost))
+                      (expensive-ads (rest aloa) cost))]))
+  

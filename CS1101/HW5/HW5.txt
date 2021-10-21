@@ -1,0 +1,216 @@
+;;
+;; Problem 1
+;;
+
+(define-struct river(name pH DO tributaries))
+;; a River is (make-river String Natural Natural ListOfRiver)
+;; interp: represents a river where
+;; name is its name
+;; pH is its pH level
+;; DO is its DO level (mg/L) 
+;; triburatries is a list of its tributaries
+
+;; a ListOfRiver is one of
+;; empty
+;; (cons River ListOfRiver)
+
+
+
+;;
+;; Problem 2
+;;
+
+(define System1(make-river "Missouri" 7 2
+                           (list (make-river "Jefferson" 5 10
+                                     (list (make-river "Beaverhead" 10 3 empty)
+                                           (make-river "Big Hole" 2 5 empty)))
+                                (make-river "Sun" 2 2 empty)
+                                (make-river "Yellowstone" 5 4 empty)
+                                (make-river "Gallatin Rivers" 1 2 empty))))
+
+
+(define System2 (make-river "Tamzes" 7 7
+                            (list (make-river "Tazi" 4 7 empty)
+                                   (make-river "Zvito" 7 2
+                                            (list (make-river "Xvito" 0 0 empty)))
+                                  (make-river "Ivai" 10 7 empty))))
+
+;;
+;; Problem 3
+;;
+
+;; fn-for-river: river->
+; (define(fn-for-river r)
+;   (...)(river-name r  )
+;        (river-pH r    )
+;        (river-DO r    ) 
+;        (fn-for-lor(river-tributaries r))) 
+
+
+
+;; fn-for-lor: ListOfRiver ->
+; (define(fn-for-lor a-lor)
+;   (cond [(empty? a-lor) (...)]
+;         [(cons? a-lor) (... (fn-for-river(first a-lor))
+;                             (fn-for-lor(rest lor)))]))
+
+
+
+;;
+;; Problem 4
+;;
+
+(check-expect(more-acidic-than System1 10)6)
+(check-expect(more-acidic-than System1 14) 7)
+(check-expect(more-acidic-than System1 0) 0)
+
+;; more-acidic-than: River Number -> Number
+;;consumes river and level and produces the number of rivers in the system that have a pH level lower than the given level
+(define(more-acidic-than system lvl)
+       (if (< (river-pH system ) lvl)
+           (+ 1 (mat-l (river-tributaries system) lvl))
+           (mat-l (river-tributaries system) lvl)))
+
+
+
+;; mat-l: ListOfRiver Number -> Number
+;; interp: consumes a ListOfRiver and pH level
+;; and produces  the number of rivers   that have ph level  less than given ph level
+(define(mat-l lor lvl)
+  (cond [(empty? lor) 0]
+        [(cons? lor) (+ (mat-l (rest lor) lvl)
+                         (more-acidic-than (first lor) lvl))]))
+                        
+
+;;
+;; Problem 5
+;;
+
+(check-expect(river-at-risk System1 )(list "Missouri" "Jefferson" "Beaverhead" "Big Hole" "Sun" "Yellowstone"  "Gallatin Rivers"))
+(check-expect(river-at-risk System2)(list "Tazi" "Zvito" "Xvito" "Ivai"))
+
+
+;; river-at-risk: River -> LiostOfStrings
+;; interp: consumes a River system and produces  list of the names of all rivers in the river system
+;; that have a pH level below 6.5  or a pH level above 8.5  or a DO level less than 6
+(define(river-at-risk r)
+       (if  (or ( <(river-pH r) 6.6) (> (river-pH r) 8.5) (< (river-DO r) 6))
+       (cons (river-name r)(river-at-risk-list (river-tributaries r)))
+              (river-at-risk-list (river-tributaries r))))
+
+
+;; river-at-risk-list: ListOfRiver -> ListOfString
+;; interp. consumes a ListOfRiver and produces names of those rivers
+;; that have a pH level below 6.5  or a pH level above 8.5  or a DO level less than 6
+
+(define(river-at-risk-list lor)
+  (cond [(empty? lor) empty]
+        [(cons? lor) (if (or ( <(river-pH (first lor)) 6.6) (> (river-pH (first lor)) 8.5) (< (river-DO (first lor)) 6)) 
+                            (append (river-at-risk  (first lor)) 
+                            (river-at-risk-list (rest lor)))
+                            
+                           (river-at-risk-list (rest lor)))]))
+
+
+;;
+;; Problem 6
+;;
+
+
+(check-expect (lower-all-ph System1)(make-river "Missouri" 6.9 2
+                           (list (make-river "Jefferson" 4.9 10
+                                     (list (make-river "Beaverhead" 9.9 3 empty)
+                                           (make-river "Big Hole" 1.9 5 empty)))
+                               (make-river "Sun" 1.9 2 empty)
+                               (make-river "Yellowstone" 4.9 4 empty)
+                               (make-river "Gallatin Rivers" 0.9 2 empty))))
+
+
+;; lower-all-ph: River -> River
+;; interp: consumes a river system  and produces the same river system
+;; except that the pH of all the rivers in the system has been lowered by 0.1
+(define(lower-all-ph r )
+       (make-river  (river-name r) (- (river-pH r) 0.1) (river-DO r) (lower-all-ph-list(river-tributaries r))))
+
+
+;; low-ph-list: ListOfRiver -> ListOfRiver
+;; interp: consumes a ListOfRiver and produces the same ListOfRiver except that the pH level of all rivers in list has been lowerd by 0.1
+
+(define (lower-all-ph-list alor)
+  (cond [(empty? alor) empty]
+        [(cons? alor)
+         (cons (lower-all-ph (first alor))
+               (lower-all-ph-list (rest alor)))]))
+
+;;
+;; Problem 7
+;;
+
+(check-expect (find-subsystem "Missouri" System1) (make-river "Missouri" 7 2
+                           (list (make-river "Jefferson" 5 10
+                                     (list (make-river "Beaverhead" 10 3 empty)
+                                           (make-river "Big Hole" 2 5 empty)))
+                                (make-river "Sun" 2 2 empty)
+                                (make-river "Yellowstone" 5 4 empty)
+                                (make-river "Gallatin Rivers" 1 2 empty))))
+
+(check-expect (find-subsystem "Jefferson"  System1)(make-river "Jefferson" 5 10
+                                     (list (make-river "Beaverhead" 10 3 empty)
+                                         (make-river "Big Hole" 2 5 empty))))
+
+(check-expect (find-subsystem "Xvito" System2 ) (make-river "Xvito" 0 0 empty))
+
+;; find-subsystem: String River  -> River or False
+;; interp: consumes a name of a River and  River system and produces the portion of the original river system that has the named river as its root.
+;; If there is no river in the system with the given name, the function returns false.
+
+(define(find-subsystem name r)
+  (if (string=? (river-name r) name)
+       r
+       (find name (river-tributaries r) )))
+
+;; find: String ListOfRiver -> River or false
+;; interp: consumes a name of the river and ListOfRiver and produces the portion of river
+;; that has the  given name
+(define(find name a-lor)
+  (cond [(empty? a-lor) false]
+        [(cons? a-lor) (if (not(false? (find-subsystem name (first a-lor))))
+                            (find-subsystem name (first a-lor)  )
+                            (find name (rest a-lor)  ))]))
+
+
+;;
+;; Problem 8
+;;
+
+;; count-acidic-tributaries-of: River String -> Number
+;; interp. consumes River sytem and name of the river
+;; produces a count of the number of tributaries of the named river
+;; which have a pH < 6.5.
+
+(check-expect(count-acidic-tributaries-of System1 "Missouri")5)
+(check-expect(count-acidic-tributaries-of System1 "Yellowstone")1)
+
+
+(define (count-acidic-tributaries-of a-river name)
+  (if (< (river-pH (find-subsystem name a-river)) 6.5)
+      (+ 1 (count-acidic-tributaries-of-list
+            (river-tributaries (find-subsystem name a-river))))
+      (count-acidic-tributaries-of-list
+       (river-tributaries (find-subsystem name a-river)))))
+
+;; count-acidic-tributaries-of-list: ListOfRiver -> Natural
+;; consumes a list of river and produces the number of rivers
+;; in that list which have a pH level less that 6.5
+
+
+
+(define (count-acidic-tributaries-of-list alor)
+  (cond [(empty? alor) 0]
+        [(cons? alor)
+         (if (< (river-pH (first alor)) 6.5)
+             (+ 1 (count-acidic-tributaries-of-list (rest alor))
+                  (count-acidic-tributaries-of-list (river-tributaries (first alor))))
+             (+ (count-acidic-tributaries-of-list (rest alor))
+                (count-acidic-tributaries-of-list (river-tributaries (first alor)))))]))
+             

@@ -1,0 +1,211 @@
+;;
+;; Problem 1
+;;
+
+(define-struct book (title author ISBN hard-cover? publisher year num-copies))
+;; A Book is a (make-book String String Natural Boolean String Number Number)
+;; interp: represents a Book where
+;; title is the title of the Book
+;; author is the author of the Book
+;; ISBN is the ISBN number of the Book
+;; hard-cover is whether or not the Book is hard-cover or paperback
+;; publisher is the name of the publisher of the Book
+;; year is the year of publication of the Book
+;; num-copies is the number of copies of the Book
+
+(define-struct periodical (name volume-num issue-num))
+;; A Periodical is a (make-periodical String Number Number)
+;; interp: represents a Periodical where
+;; name is the name of the Periodical
+;; volume-num is the volume number of the Periodical
+;; issue-num is the issue number of the Periodical
+
+(define-struct cd (title author narrator num-disks playing-time num-copies))
+;; A Cd is a (make-cd String String String Number Number Number)
+;; interp: represents a Cd where
+;; title is the title of the Cd
+;; author is the name of the author of the Cd
+;; narrator is the name of the narrator of the Cd
+;; num-disks is the number of disks that the Cd has
+;; playing-time is the total amount of playing time in minutes
+;; num-copies is the number of copies of the Cd
+
+(define-struct libraryItem (item))
+;; A LibraryItem one of:
+;;   Book
+;;   Periodical
+;;   Cd
+
+;;
+;; Problem 2
+;;
+
+(define bookExample (make-book "1984" "George Orwell" 9780451518651 true "Secker and Warburg" 1949 50000))
+
+(define periodicalExample (make-periodical "Bioscience" 3 5))
+
+(define cdExample (make-cd "The World as Stage" "Shakespeare" "Bill Bryson" 5 120 10))
+
+;;
+;; Problem 3
+;;
+
+;; book-fcn: Book ->
+;;
+; (define (book-fcn a-book)
+;   (... (book-title a-book) (book-author a-book) (book-ISBN a-book) (book-hard-cover? a-book) (book-publisher a-book) (book-year a-book) (book-num-copies a-book)))
+
+
+;; periodical-fcn: Periodical ->
+;;
+; (define (periodical-fcn a-periodical)
+;   (... (periodical-name a-periodical) (periodical-volume-num a-periodical) (periodical-issue-num a-periodical)))
+
+
+;; cd-fcn: Cd ->
+;;
+; (define (cd-fcn a-cd)
+;   (... (cd-title a-cd) (cd-author a-cd) (cd-narrator a-cd) (cd-num-disks a-cd) (cd-playing-time a-cd) (cd-num-copies a-cd)))
+
+
+;; libraryItem-fcn: LibraryItem ->
+;;
+; (define (libraryItem-fcn an-item)
+;   (cond
+;     [(book? an-item) (book-fcn an-item)]
+;     [(periodical? an-item) (periodical-fcn an-item)]
+;     [(cd? an-item) (cd-fcn an-item)]
+;   ))
+
+
+;;
+;; Problem 4
+;;
+
+;; contributor?: LibraryItem String -> Boolean
+;; Consumes a LibraryItem and a String and produces true if
+;; the LibraryItem is a book whose author has the given name or if
+;; the item is a Cd where either the author or the narrator (or both) have the given name.
+;; Otherwise the function produces false
+;; The function also produces false if a periodical is given as an input for the first argument
+
+(check-expect (contributor? periodicalExample "Whatever") false)
+(check-expect (contributor? bookExample "George Orwell") true)
+(check-expect (contributor? cdExample "Shakespeare") true)
+(check-expect (contributor? cdExample "Bill Bryson") true)
+(check-expect (contributor? bookExample "Orwell") false)
+(check-expect (contributor? bookExample "") false)
+(check-expect (contributor? (make-book "Animal Farm" "George Orwell" 9780736692427 false "Secker and Warburg" 1945 20000) "George Orwell") true)
+
+(define (contributor? an-item name)
+  (cond
+    [(or (book? an-item) (cd? an-item))
+     (cond
+       [(book? an-item) (if (string=? name (book-author an-item)) true false)]
+       [(cd? an-item) (if (or (string=? name (cd-author an-item)) (string=? name (cd-narrator an-item))) true false)])
+    ]
+    [(periodical? an-item) false]))
+
+;;
+;; Problem 5
+;;
+
+;; add-copy: LibraryItem -> LibraryItem
+;; Consumes a LibraryItem and produces an unchanged LibraryItem if the given LibraryItem is a periodical.
+;; Otherwise, the LibraryItem that is produced consists of the same as fields the original.
+;; The only difference is that the number of copies is increased by one (+ 1).
+
+(check-expect (add-copy periodicalExample) (make-periodical "Bioscience" 3 5))
+(check-expect (add-copy cdExample) (make-cd "The World as Stage" "Shakespeare" "Bill Bryson" 5 120 11))
+(check-expect (add-copy bookExample) (make-book "1984" "George Orwell" 9780451518651 true "Secker and Warburg" 1949 50001))
+(check-expect (add-copy (make-book "Animal Farm" "George Orwell" 9780736692427 false "Secker and Warburg" 1945 20000))
+              (make-book "Animal Farm" "George Orwell" 9780736692427 false "Secker and Warburg" 1945 20001))
+
+(define (add-copy an-item)
+  (cond
+    [(book? an-item) (make-book (book-title an-item) (book-author an-item) (book-ISBN an-item) (book-hard-cover? an-item) (book-publisher an-item) (book-year an-item) (+ 1 (book-num-copies an-item)))]
+    [(cd? an-item) (make-cd (cd-title an-item) (cd-author an-item) (cd-narrator an-item) (cd-num-disks an-item) (cd-playing-time an-item) (+ 1 (cd-num-copies an-item)))]
+    [(periodical? an-item) an-item]))
+
+;;
+;; Problem 6
+;;
+
+;; character-count: ListOfString -> Number
+;; Consumes a ListOfString and produces the number of characters
+;; of all strings in the list
+
+(check-expect (character-count (cons "A" (cons "B" (cons "C" empty)))) 3)
+(check-expect (character-count empty) 0)
+(check-expect (character-count (cons "" (cons "B" empty))) 1)
+
+(define (character-count alos)
+  (cond
+    [(empty? alos) 0]
+    [(cons? alos) (+ (string-length (first alos)) (character-count (rest alos)))]))
+
+;;
+;; Problem 7
+;;
+
+;; numeric-strings: ListOfString -> ListOfString
+;; Consumes a ListOfString and produces a ListOfString that only consists
+;; of the numeric characters of the original list
+
+(check-expect (numeric-strings (cons "abc" (cons "123" (cons "abc123" empty)))) (cons "123" empty))
+(check-expect (numeric-strings empty) empty)
+(check-expect (numeric-strings (cons "" empty)) empty)
+
+(define (numeric-strings alos)
+  (cond
+    [(empty? alos) empty]
+    [(cons? alos) (if (equal? (string->number (first alos)) false) (numeric-strings (rest alos)) (cons (first alos) empty))]))
+
+;;
+;; Problem 8
+;;
+
+;; shorten-by-one: String -> String
+;; Consumes a String and produces the same String without the last letter
+
+(check-expect (shorten-by-one "test") "tes")
+(check-expect (shorten-by-one "text") "tex")
+
+(define (shorten-by-one string)
+  (substring string 0 (- (string-length string) 1)))
+
+;; contains-X: String -> Number
+;; Consumes a String and produces the number of times that the String contains
+;; the letter x/X (upper and lower case)
+
+(check-expect (contains-X "") 0)
+(check-expect (contains-X "test") 0)
+(check-expect (contains-X "text") 1)
+(check-expect (contains-X "box") 1)
+(check-expect (contains-X "Mac OSx") 1)
+(check-expect (contains-X "Mac OSx X") 2)
+
+(define (contains-X string)
+  (cond
+    [(equal? string "") 0]
+    [else (if (or (equal? (substring string (- (string-length string) 1) (string-length string)) "X")
+         (equal? (substring string (- (string-length string) 1) (string-length string)) "x")) (+ 1 (contains-X (shorten-by-one string))) (contains-X (shorten-by-one string)))]
+    ))
+
+;; count-X: ListOfString -> Number
+;; Consumes a ListOfString and produces the number of X's (upper and lower case)
+;; that occur in all strings in the list
+
+(check-expect (count-X (cons "" empty)) 0)
+(check-expect (count-X (cons "123" empty)) 0)
+(check-expect (count-X (cons "" (cons "x" (cons "xandAnortherX" empty)))) 3)
+(check-expect (count-X (cons "text" (cons "test" (cons "Mac OSx" (cons "xandAnortherX" empty))))) 4)
+(check-expect (count-X (cons "text" (cons "test" (cons "Mac OSx" (cons "XandAnortherX" empty))))) 4)
+
+(define (count-X alos)
+  (cond
+    [(empty? alos) 0]
+    [(cons? alos) (+ (contains-X (first alos)) (count-X (rest alos)))]))
+    
+
+    
